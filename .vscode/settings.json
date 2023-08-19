@@ -1,0 +1,22 @@
+{
+  "[python]": {
+    "editor.defaultFormatter": "ms-python.autopep8"
+  },
+  "python.formatting.provider": "none",
+  "cSpell.words": [
+    "dotenv",
+    "fastapi",
+    "jsonschema",
+    "meilisearch",
+    "MELISEARCH",
+    "passlib",
+    "passwordless",
+    "SENDINBLUE",
+    "sessionmaker",
+    "skipkeys",
+    "sqlalchemy",
+    "starlette",
+    "tqdm",
+    "uvicorn"
+  ]
+}
