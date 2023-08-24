@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, JSON
+from sqlalchemy import Column
 from database.db import Base
 from sqlalchemy import ForeignKey, BigInteger
 from model.organization import OrganizationModel
@@ -15,3 +15,5 @@ class ValidationModel(Base):
     data_id = Column(BigInteger, ForeignKey(UploadsModel.id), nullable=False)
     schema_id = Column(BigInteger, ForeignKey(SchemaModel.id), nullable=False)
     created_at = Column(BigInteger, nullable=False, default=int(time.time()))
+    org_id = Column(BigInteger, ForeignKey(
+        OrganizationModel.id), nullable=False)

@@ -1,7 +1,7 @@
 from starlette.middleware.cors import CORSMiddleware
 from bootstrap_config import bootstrap_config, app_config
 from fastapi import FastAPI, Request, Response, HTTPException
-from controller import users, auth, uploads, validate
+from controller import users, auth, uploads, validate, schema
 import traceback
 import os
 import uvicorn
@@ -9,6 +9,7 @@ from fastapi import FastAPI
 from loguru import logger
 import sentry_sdk
 import logging
+from utils.mongo import get_mongo
 
 logger.add("logs/{time}.log", rotation="1 day",
            retention="10 days", level="INFO")
@@ -35,8 +36,6 @@ if (app_config.get("DATABASE_URL") is None):
 
 mainApp = FastAPI()
 
-guestApp = FastAPI()
-
 
 def catch_exceptions_middleware(request: Request, call_next):
     try:
@@ -60,6 +59,7 @@ def setup_main_app():
     mainApp.include_router(auth.router)
     mainApp.include_router(validate.router)
     mainApp.include_router(uploads.router)
+    mainApp.include_router(schema.router)
     mainApp.middleware("http")(catch_exceptions_middleware)
 
 

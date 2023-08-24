@@ -1,4 +1,5 @@
 import boto3
+from io import BytesIO
 from bootstrap_config import app_config
 from fastapi.exceptions import HTTPException as HttpException
 from fastapi import UploadFile
@@ -57,18 +58,17 @@ class S3Service:
         s3_object = self.client.get_object(
             Bucket=self.bucket_name, Key=upload_entry.file_name)
         end_time = time.time()
+        start_time = time.time()
+        csv_content = s3_object['Body'].read()
         execution_time = end_time - start_time
         logger.info(
             f"Downloaded file from S3 in {execution_time} seconds")
-        start_time = time.time()
-        logger.info("preprocessing file")
-        csv_content = s3_object['Body'].read().decode('utf-8')
-        data = csv_content.split('\n')
+        logger.info("Preprocessing file")
         end_time = time.time()
         execution_time = end_time - start_time
         logger.info(
             f"Preprocessed file in {execution_time} seconds")
-        return data
+        return BytesIO(csv_content)
 
     def upload_json(self, data, file_name):
         try:

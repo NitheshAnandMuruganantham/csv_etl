@@ -12,7 +12,8 @@ router = APIRouter(prefix="/validate", tags=["validation"])
 @router.post("/")
 def upload(id: str, schema: str, db: Session = Depends(get_db), user: SystemUser = Depends(get_current_user)):
     return ValidationService(db, {
-        "org_id": user.org_id
+        "org_id": user.org_id,
+        "user_id": user.id
     }).validate(id, schema)
 
 

@@ -17,6 +17,9 @@ reuseable_oauth = OAuth2PasswordBearer(
 async def get_current_user(token: str = Depends(reuseable_oauth)) -> SystemUser:
     try:
         payload = decode_token(token)
+        print("=====")
+        print(payload)
+        print("=====")
         token_data = TokenPayload(**payload)
 
         if datetime.fromtimestamp(token_data.exp) < datetime.now():
