@@ -7,8 +7,8 @@ from model.schema import SchemaModel
 import time
 
 
-class ValidationModel(Base):
-    __tablename__ = "validation_data"
+class OutputModel(Base):
+    __tablename__ = "output_data"
     id = Column(BigInteger, primary_key=True,
                 nullable=False, autoincrement=True)
     file_id = Column(BigInteger, ForeignKey(UploadsModel.id), nullable=False)

@@ -11,3 +11,6 @@ class UploadsService(S3Service):
 
     def server_upload(self, id, key, image_1, image_2):
         return self.upload_images(id, key, image_1, image_2)
+
+    def upload_fileobj(self, buffer, file_name):
+        return self.upload_obj(buffer, file_name)

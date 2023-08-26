@@ -41,6 +41,21 @@ class S3Service:
             traceback.print_exc()
             return False
 
+    def upload_obj(self, buffer, file_name):
+        try:
+            folder_path = self.folder_path + "/" + file_name
+            self.client.put_object(
+                Bucket=self.bucket_name, Key=folder_path, Body=buffer)
+
+            return self.repo.create({
+                "name": file_name,
+                "bucket": self.bucket_name,
+                "file_name": folder_path,
+            })
+        except ClientError as e:
+            traceback.print_exc()
+            return False
+
     def download(self, id):
         try:
             file = self.repo.findOne(id)

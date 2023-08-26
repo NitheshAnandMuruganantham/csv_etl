@@ -1,0 +1,22 @@
+{
+  "validation": {
+    "type": "object",
+    "properties": {
+      "appVersion": {
+        "type": "string",
+        "minLength": 4
+      }
+    },
+    "required": ["appVersion"]
+  },
+  "clean_up": {
+    "emoji_treatment": {
+      "action": "drop"
+    },
+    "nan_treatment": {
+      "action": "drop"
+    }
+  },
+  "mapping": [],
+  "transform": "csv"
+}

@@ -1,11 +1,11 @@
-from model.validation import ValidationModel as Output
+from model.output import OutputModel as Output
 from fastapi import HTTPException
 from utils.repo import get_group_by_queries
 from utils.filter_parser import FilterParser
 from sqlalchemy.orm import Session
 
 
-class ValidationRepository():
+class OutputRepository():
     def __init__(self, db: Session, session=None):
         if session is None:
             session = {}

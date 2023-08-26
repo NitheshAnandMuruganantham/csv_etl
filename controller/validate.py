@@ -18,7 +18,14 @@ def upload(id: str, schema: str, db: Session = Depends(get_db), user: SystemUser
 
 
 @router.get("/")
-def get_validation_data(id: str, db: Session = Depends(get_db), user: SystemUser = Depends(get_current_user)):
+def get_validation_data(id: str, pid: str = None, db: Session = Depends(get_db), user: SystemUser = Depends(get_current_user)):
     return ValidationService(db, {
         "org_id": user.org_id
-    }).get_validation_data(id)
+    }).get_validation_data(id, pid)
+
+
+@router.get("/output")
+def get_output_file(id: str, pid: str = None, db: Session = Depends(get_db), user: SystemUser = Depends(get_current_user)):
+    return ValidationService(db, {
+        "org_id": user.org_id
+    }).get_output_file(id, pid)
