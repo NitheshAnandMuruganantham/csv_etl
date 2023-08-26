@@ -6,6 +6,7 @@ from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 from model.validation import ValidationModel
 from model.users import UserModel
+from model.output import OutputModel
 from model.organization import OrganizationModel
 from model.uploads import UploadsModel
 

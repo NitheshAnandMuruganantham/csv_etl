@@ -10,8 +10,6 @@ import time
 from utils.celery import celery
 from utils.redis import get_redis
 from utils.mongo import get_mongo
-import sys
-from uuid import uuid4 as uuid
 from celery import group
 
 
@@ -43,13 +41,14 @@ def process_batch(args):
 
 @celery.task
 def start_validation_csv(id, schema, schema_id, org_id, user_id, pid):
+    schema = schema["validation"]
     overall_start_time = time.time()
     db = get_db_script()
     redis = get_redis()
     mongo = get_mongo()
     try:
-        logger.info("Starting background validation", "id", id,
-                    "schema_id", schema_id, "org_id", org_id)
+        logger.info(
+            f"Starting background validation id {id} schema_id {schema_id} org_id {org_id}")
         logger.info("Pulling file")
         file_pull_start_time = time.time()
         file = UploadsService(db,  'weight/photos', {
@@ -86,8 +85,8 @@ def start_validation_csv(id, schema, schema_id, org_id, user_id, pid):
             warnings += record["warnings"]
 
         process_end_time = time.time()
-        logger.info("Validation completed", "execution_time",
-                    process_end_time - process_start_time)
+        logger.info(
+            f"Validation completed execution_time {process_end_time - process_start_time}")
         data["errors"] = errors
         data["warnings"] = warnings
         overall_end_time = time.time()
@@ -119,14 +118,15 @@ def start_validation_csv(id, schema, schema_id, org_id, user_id, pid):
             "org_id": org_id
         }).create({
             "file_id": id,
+            "pid": pid,
             "data_id": data_id,
             "schema_id": schema_id,
         })
         end_time = time.time()
-        logger.info("Validation data saved", "execution_time",
-                    end_time - start_time)
-        logger.info("Validation completed", "execution_time",
-                    end_time - overall_start_time)
+        logger.info(
+            f"Validation data saved execution_time {end_time - start_time}")
+        logger.info(
+            f"Validation completed execution_time: {end_time - overall_start_time}")
         redis.set(f"validation_{id}_status", "completed")
     except Exception as err:
         redis.set(f"validation_{id}_status", "failed")
