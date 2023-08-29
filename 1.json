@@ -14,7 +14,8 @@
       "action": "drop"
     },
     "nan_treatment": {
-      "action": "drop"
+      "action": "replace",
+      "values": []
     }
   },
   "mapping": [],

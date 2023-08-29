@@ -18,11 +18,11 @@ def process(id, schema, schema_id, org_id, user_id, pid, session):
     mongo = get_mongo()
     redis = get_redis()
     db = get_db_script()
-    validation_process = start_validation_csv.delay(
-        id, schema, schema_id, org_id, user_id, pid)
+    # validation_process = start_validation_csv.delay(
+    #     id, schema, schema_id, org_id, user_id, pid)
 
-    while validation_process.status != "SUCCESS":
-        time.sleep(1)
+    # while validation_process.status != "SUCCESS":
+    #     time.sleep(1)
 
     logger.info(
         f"Starting background validation id {id} schema_id {schema_id} org_id {org_id}")
@@ -38,7 +38,12 @@ def process(id, schema, schema_id, org_id, user_id, pid, session):
     logger.info("Reading file")
     logger.info("processing to dataframe")
     df = pd.read_csv(file, low_memory=False)
-    logger.info("File read")
+    logger.info("processed dataframe")
+    logger.info(f"df shape {df.shape}")
+    logger.info("===========df==========")
+    logger.info(df[:10])
+    logger.info("===========df==========")
+
     read_csv_end_time = time.time()
     logger.info(
         f"File read execution_time {read_csv_end_time - read_csv_start_time}")
@@ -48,6 +53,7 @@ def process(id, schema, schema_id, org_id, user_id, pid, session):
     cleanup_end_time = time.time()
     logger.info(
         f"Cleanup completed execution_time {cleanup_end_time - cleanup_start_time}")
+    logger
     logger.info("Starting mapping")
     mapping_start_time = time.time()
     df = MapperService(
@@ -55,6 +61,7 @@ def process(id, schema, schema_id, org_id, user_id, pid, session):
     mapping_end_time = time.time()
     logger.info(
         f"Mapping completed execution_time {mapping_end_time - mapping_start_time}")
+    logger.info(f"df shape {df.shape}")
     logger.info("Starting transformation")
     transformation_start_time = time.time()
     transform = TransformerService(
