@@ -64,7 +64,7 @@ def start_validation_csv(id, schema, schema_id, org_id, user_id, pid):
         read_csv_start_time = time.time()
         logger.info("Reading file")
         logger.info("processing to dataframe")
-        df = pd.read_csv(file, low_memory=False)
+        df = pd.read_csv(file, engine='pyarrow', low_memory=False)
         df = df.to_dict('records')
         read_csv_end_time = time.time()
         logger.info(
