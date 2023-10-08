@@ -15,6 +15,7 @@ from celery import group
 
 @celery.task
 def process_batch(args):
+    redis = get_redis()
     pid = args["pid"]
     batch = args["batch"]
     schema = args["schema"]
@@ -28,11 +29,14 @@ def process_batch(args):
             errors.append({
                 "row": json.loads(json.dumps(row, skipkeys=True)),
                 "error": err.message,
+                "key": err.absolute_path[0],
                 "type": "schema-error",
                 "error_type": "error"
             })
     print("Batch processed")
     mongo = get_mongo()
+    if len(errors) > 0:
+        redis.set(f"validation_{pid}_status", "failed")
     mongo[f"validation:{pid}"].insert_one({
         "errors": errors,
         "warnings": warnings
@@ -75,9 +79,16 @@ def start_validation_csv(id, schema, schema_id, org_id, user_id, pid):
         process_start_time = time.time()
         redis.set(f"validation_{id}_status", "processing")
         batch_size = calculate_batch_count(total_rows)
+        logger.info(f"Batch size {batch_size}")
         logger.info("Starting validation")
-        batch_results = group(process_batch.s(
-            {"batch": df[i:i + batch_size], "schema": schema, "pid": pid}) for i in range(0, len(df), batch_size)).apply_async()
+        batch = []
+        for i in range(0, len(df), batch_size):
+            batch.append({
+                "batch": df[i:i + batch_size],
+                "schema": schema,
+                "pid": pid
+            })
+        batch_results = group(process_batch.s(i) for i in batch).apply_async()
         while not batch_results.ready():
             time.sleep(1)
         for record in mongo[f"validation:{pid}"].find():
@@ -110,6 +121,7 @@ def start_validation_csv(id, schema, schema_id, org_id, user_id, pid):
         data["created_at"] = time.time()
         start_time = time.time()
         logger.info("Uploading validation data")
+        logger.info(data)
         data_id = UploadsService(db,  'weight/photos', {
             "org_id": org_id
         }).upload_json(data, f"validation/{pid}_{id}.json")

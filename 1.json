@@ -2,12 +2,20 @@
   "validation": {
     "type": "object",
     "properties": {
-      "appVersion": {
-        "type": "string",
-        "minLength": 4
+      "number": {
+        "type": "string"
+      },
+      "incident_state": {
+        "type": "string"
+      },
+      "active": {
+        "type": "string"
+      },
+      "reassignment_count": {
+        "type": "number"
       }
     },
-    "required": ["appVersion"]
+    "required": ["number", "reassignment_count", "active", "incident_state"]
   },
   "clean_up": {
     "emoji_treatment": {

@@ -1,5 +1,5 @@
 from passlib.context import CryptContext
-from bootstrap_config import app_config
+from settings import settings
 import string
 import secrets
 from datetime import datetime, timedelta
@@ -28,12 +28,12 @@ def get_hashed_password(password: str) -> str:
 
 def decode_token(token: str) -> str:
     token = token.replace("Bearer ", "")
-    return jwt.decode(token, app_config["AUTH_SECRET"], app_config["AUTH_ALGORITHM"])
+    return jwt.decode(token, settings.AUTH_SECRET, settings.AUTH_ALGORITHM)
 
 
 def decode_refresh_token(token: str) -> str:
     token = token.replace("Bearer ", "")
-    return jwt.decode(token, app_config["AUTH_SECRET"], app_config["AUTH_ALGORITHM"])
+    return jwt.decode(token, settings.AUTH_SECRET, settings.AUTH_ALGORITHM)
 
 
 def verify_password(password: str, hashed_pass: str) -> bool:
@@ -47,7 +47,7 @@ def create_access_token(data: dict) -> str:
     to_encode = {"exp": expires_delta, "sub": "access_token"}
     to_encode.update(data)
     encoded_jwt = jwt.encode(
-        to_encode, app_config["AUTH_SECRET"], app_config["AUTH_ALGORITHM"])
+        to_encode, settings.AUTH_SECRET, settings.AUTH_ALGORITHM)
     return encoded_jwt
 
 
@@ -58,5 +58,5 @@ def create_refresh_token(data: dict) -> str:
     to_encode = {"exp": expires_delta, "sub": "refresh_token"}
     to_encode.update(data)
     encoded_jwt = jwt.encode(
-        to_encode, app_config["AUTH_SECRET"], app_config["AUTH_ALGORITHM"])
+        to_encode, settings.AUTH_SECRET, settings.AUTH_ALGORITHM)
     return encoded_jwt

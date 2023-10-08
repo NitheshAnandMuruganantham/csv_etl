@@ -1,6 +1,6 @@
 import boto3
 from io import BytesIO
-from bootstrap_config import app_config
+from settings import settings
 from fastapi.exceptions import HTTPException as HttpException
 from fastapi import UploadFile
 from botocore.exceptions import ClientError
@@ -20,8 +20,9 @@ class S3Service:
         self.org_id = session.get("org_id", None)
         self.session = session
         self.client = boto3.client('s3',
-                                   aws_access_key_id=app_config["ACCESS_KEY_ID"],
-                                   aws_secret_access_key=app_config["SECRET_ACCESS_KEY"],)
+                                   aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+                                   aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+                                   )
         self.repo = Uploads(db, session)
         self.db = db
         self.folder_path = folder_path
