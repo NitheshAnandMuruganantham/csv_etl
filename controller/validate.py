@@ -10,7 +10,7 @@ router = APIRouter(prefix="/validate", tags=["validation"])
 
 
 @router.post("/")
-def upload(id: str, schema: str, db: Session = Depends(get_db), user: SystemUser = Depends(get_current_user)):
+def validate(id: str, schema: str, db: Session = Depends(get_db), user: SystemUser = Depends(get_current_user)):
     return ValidationService(db, {
         "org_id": user.org_id,
         "user_id": user.id
@@ -18,10 +18,10 @@ def upload(id: str, schema: str, db: Session = Depends(get_db), user: SystemUser
 
 
 @router.get("/")
-def get_validation_data(id: str, pid: str = None, db: Session = Depends(get_db), user: SystemUser = Depends(get_current_user)):
+def get_validation_data(pid: str = None, db: Session = Depends(get_db), user: SystemUser = Depends(get_current_user)):
     return ValidationService(db, {
         "org_id": user.org_id
-    }).get_validation_data(id, pid)
+    }).get_validation_data(pid)
 
 
 @router.get("/output")

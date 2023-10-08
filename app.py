@@ -1,5 +1,4 @@
 from starlette.middleware.cors import CORSMiddleware
-from bootstrap_config import bootstrap_config, app_config
 from fastapi import FastAPI, Request, Response, HTTPException
 from controller import users, auth, uploads, validate, schema
 import traceback
@@ -31,10 +30,7 @@ if os.environ.get("ENV", "development") == "production":
     )
 
 
-if (app_config.get("DATABASE_URL") is None):
-    bootstrap_config()
-
-mainApp = FastAPI()
+app = FastAPI()
 
 
 def catch_exceptions_middleware(request: Request, call_next):
@@ -48,22 +44,19 @@ def catch_exceptions_middleware(request: Request, call_next):
 
 
 def setup_main_app():
-    mainApp.add_middleware(
+    app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
     )
-    mainApp.include_router(users.router)
-    mainApp.include_router(auth.router)
-    mainApp.include_router(validate.router)
-    mainApp.include_router(uploads.router)
-    mainApp.include_router(schema.router)
-    mainApp.middleware("http")(catch_exceptions_middleware)
-
-
-app = FastAPI()
+    app.include_router(users.router)
+    app.include_router(auth.router)
+    app.include_router(validate.router)
+    app.include_router(uploads.router)
+    app.include_router(schema.router)
+    app.middleware("http")(catch_exceptions_middleware)
 
 
 @app.get(
@@ -71,9 +64,6 @@ app = FastAPI()
 )
 def health_check():
     return {"status": "OK"}
-
-
-app.mount("/", mainApp)
 
 
 setup_main_app()

@@ -1,17 +1,17 @@
 from twilio.rest import Client
-from bootstrap_config import app_config
+from settings import settings
 import traceback
 
 
 class SmsService:
     def __init__(self):
         self.client = Client(
-            app_config["TWILIO_ACCOUNT_SID"], app_config["TWILIO_AUTH_TOKEN"])
+            settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
 
     def message(self, to, body):
         self.client.messages.create(
             body=body,
-            from_=app_config["TWILIO_PHONE_NUMBER"],
+            from_=settings.TWILIO_PHONE_NUMBER,
             to=to)
 
     def construct_bill_message(self, customer, data):

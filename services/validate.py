@@ -10,6 +10,7 @@ import traceback
 from uuid import uuid4 as uuid
 from tasks.process import process
 from utils.redis import get_redis
+from utils.mongo import get_mongo
 
 
 class ValidationService:
@@ -48,23 +49,17 @@ class ValidationService:
             "message": "Validation started"
         }
 
-    def get_validation_data(self, upload_id, pid=None):
-        data = []
-        filters = {
-            "file_id__eq": upload_id,
+    def get_validation_data(self, pid):
+        data = {
+            "errors": [],
+            "warnings": []
         }
-        if pid is not None:
-            filters["pid__eq"] = pid
-        resp = self.validationRepo.findAll(filters)
+        mongo = get_mongo()
+        files = mongo[f"validation:{pid}"].find({})
+        for doc in files:
+            data["errors"].append(doc["errors"])
+            data["warnings"].append(doc["warnings"])
 
-        upload_service = UploadsService(self.db,  'weight/photos', {
-            "org_id": self.org_id
-        })
-
-        for row in resp:
-            row = row.__dict__
-            row["url"] = upload_service.download(row["data_id"])
-            data.append(row)
         return data
 
     def get_output_file(self, upload_id, pid=None):

@@ -1,11 +1,8 @@
-from bootstrap_config import app_config, bootstrap_config
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from settings import settings
 
-if (app_config.get("DATABASE_URL") is None):
-    bootstrap_config()
-
-engine = create_engine(app_config["DATABASE_URL"], echo=True,
+engine = create_engine(settings.DATABASE_URL, echo=True,
                        pool_size=20, max_overflow=30)
 
 

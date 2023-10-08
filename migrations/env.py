@@ -1,5 +1,4 @@
-
-
+from settings import settings
 from logging.config import fileConfig
 from database.db import Base
 from sqlalchemy import engine_from_config
@@ -11,14 +10,11 @@ from model.organization import OrganizationModel
 from model.uploads import UploadsModel
 
 
-from bootstrap_config import bootstrap_config, app_config
 from alembic import context
 
-if (app_config.get("DATABASE_URL") is None):
-    bootstrap_config()
 
 config = context.config
-config.set_main_option("sqlalchemy.url", app_config["DATABASE_URL"])
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 

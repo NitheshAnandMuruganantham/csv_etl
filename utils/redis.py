@@ -1,17 +1,16 @@
 import redis
-from bootstrap_config import app_config, bootstrap_config
+from settings import settings
 
 
 def get_redis_conn():
-    bootstrap_config()
-    return f"redis://default:{app_config['REDIS_PASSWORD']}@{app_config['REDIS_URL']}:{app_config['REDIS_PORT']}"
+    return f"redis://default:{settings.REDIS_PASSWORD}@{settings.REDIS_URL}:{settings.REDIS_PORT}"
 
 
 def get_redis():
     return redis.Redis(
-        host=app_config['REDIS_URL'],
-        port=app_config['REDIS_PORT'],
-        password=app_config['REDIS_PASSWORD'],
+        host=settings.REDIS_URL,
+        port=settings.REDIS_PORT,
+        password=settings.REDIS_PASSWORD,
         charset="utf-8",
         decode_responses=True
     )

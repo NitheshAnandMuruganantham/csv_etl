@@ -1,6 +1,6 @@
 import sib_api_v3_sdk
-from bootstrap_config import app_config
 import traceback
+from settings import settings
 
 
 class MailService():
@@ -8,7 +8,7 @@ class MailService():
     def send(self, to, name, subject, content, template_id):
         configuration = sib_api_v3_sdk.Configuration()
 
-        configuration.api_key['api-key'] = app_config["SENDINBLUE_API_KEY"]
+        configuration.api_key['api-key'] = settings.SENDINBLUE_API_KEY
 
         api_instance = sib_api_v3_sdk.TransactionalEmailsApi(
             sib_api_v3_sdk.ApiClient(configuration))
