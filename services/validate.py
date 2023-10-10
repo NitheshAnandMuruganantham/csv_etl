@@ -11,6 +11,7 @@ from uuid import uuid4 as uuid
 from tasks.process import process
 from utils.redis import get_redis
 from utils.mongo import get_mongo
+import time
 
 
 class ValidationService:
@@ -24,15 +25,22 @@ class ValidationService:
     def validate(self, id, schema_id):
         logger.info("Validating", "id", id, "schema_id", schema_id)
         logger.info("pulling schema")
-
+        schema_pull_time = 0
         try:
+            start_time = time.time()
             schema = self.schemaRepo.findOne(schema_id).data
+            end_time = time.time()
+            schema_pull_time = end_time - start_time
         except:
             traceback.print_exc()
             logger.error("Schema not found", "id", id, "schema_id", schema_id)
             raise HTTPException(
                 status_code=404, detail="Schema not found")
         pid = uuid()
+        metrics = {
+            "schema_pull_time": schema_pull_time,
+            "enqueue_time": int(time.time() * 1000)
+        }
         process.delay(
             id,
             schema,
@@ -40,7 +48,8 @@ class ValidationService:
             self.org_id,
             self.session["user_id"],
             pid,
-            self.session
+            self.session,
+            metrics
         )
         get_redis().set(
             f"validation_status_{self.session['user_id']}_{pid}", "started")
